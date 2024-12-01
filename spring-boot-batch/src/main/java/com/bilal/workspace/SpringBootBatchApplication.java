@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WorkspaceApplication {
+public class SpringBootBatchApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WorkspaceApplication.class, args);
+		SpringApplication.run(SpringBootBatchApplication.class, args);
 	}
 
 }

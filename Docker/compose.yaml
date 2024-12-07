@@ -1,0 +1,42 @@
+name: spring-boot-workspace
+services:
+  db:
+    image: postgres:latest
+    container_name: spring-boot-workspace-postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: testdatabase
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-boot-workspace-network
+    volumes:
+      - spring-boot-workspace-pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: spring-boot-workspace-pgadmin-container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5433:80"
+    networks:
+      - spring-boot-workspace-network
+    volumes:
+      - spring-boot-workspace-pgadmin:/var/lib/pgadmin
+
+networks:
+  spring-boot-workspace-network:
+    driver: bridge
+
+volumes:
+  spring-boot-workspace-pgdata:
+    driver: local
+  spring-boot-workspace-pgadmin:
+    driver: local
+
+#  docker exec -it 95b87d9e5316 psql -U postgres -d testdatabase
+#  docker run --name postgres-container -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=testdatabase -p 5432:5432 -d postgres:latest

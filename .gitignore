@@ -1,6 +1,6 @@
 HELP.md
 .gradle
-build/
+build/spring-boot-starter
 !**/src/main/**/build/
 !**/src/test/**/build/
 

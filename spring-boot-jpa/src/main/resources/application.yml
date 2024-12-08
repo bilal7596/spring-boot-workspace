@@ -1,3 +1,22 @@
 spring:
   application:
-    name: spring-boot-starter
+    name: spring-boot-jpa
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring-boot-jpa
+    username: postgres
+    password: pass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      database: postgresql
+      database-platform: org.hibernate.dialect.PostgeSQLDialect
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false

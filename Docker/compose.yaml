@@ -2,7 +2,7 @@ name: spring-boot-workspace
 services:
   db:
     image: postgres:latest
-    container_name: spring-boot-workspace-postgres-container
+    container_name: spring-boot-workspace-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
@@ -16,7 +16,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: spring-boot-workspace-pgadmin-container
+    container_name: spring-boot-workspace-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
@@ -27,6 +27,45 @@ services:
       - spring-boot-workspace-network
     volumes:
       - spring-boot-workspace-pgadmin:/var/lib/pgadmin
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: spring-boot-workspace-zookeeper
+    ports:
+      - "2181:2181"  # Zookeeper default port
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - spring-boot-workspace-network
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: spring-boot-workspace-kafka
+    ports:
+#      - "9093:9093"  # Exposing the internal Kafka port
+      - "9092:9092"  # Exposing the external Kafka port
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+#      KAFKA_LISTENERS: INSIDE://127.0.0.1:9093,OUTSIDE://localhost:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
+#      KAFKA_LISTENER_NAME_INTERNAL: INSIDE
+#      KAFKA_LISTENER_INTERNAL: INSIDE://kafka:9093
+#      KAFKA_ADVERTISED_LISTENER_NAME_INTERNAL: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_LISTENER_PORT: 9093
+#      KAFKA_LISTENER_NAME_EXTERNAL: OUTSIDE
+#      KAFKA_ADVERTISED_LISTENER_NAME_EXTERNAL: OUTSIDE://localhost:9093
+#      KAFKA_ADVERTISED_LISTENER: OUTSIDE://localhost:9093
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_LISTENER_NAMES: INSIDE,OUTSIDE
+#      KAFKA_LISTENER_INTERFACES: INSIDE,OUTSIDE
+#      KAFKA_LISTENER_PORTS: 9093
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    depends_on:
+      - zookeeper
+    networks:
+      - spring-boot-workspace-network
 
 networks:
   spring-boot-workspace-network:
